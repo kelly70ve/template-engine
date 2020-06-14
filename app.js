@@ -14,107 +14,80 @@ const render = require("./lib/htmlRenderer");
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-
-
-const managerQuestions = [
+const questions = [
+  {
+    type: "list",
+    message: "What type of Employee would you like to add?",
+    name: "empType",
+    choices: [
+        "Manager",
+        "Engineer",
+        "Intern"
+    ]
+  },
   {
     type: "input",
     name: "name",
-    message: "What is the manager's name?"
+    message: "What is the employee's name?"
   },
   {
     type: "input",
     name: "id",
-    message: "What is the manager's id number?"
+    message: "What is the employee's id number?"
   },
   {
     type: "input",
     name: "email",
-    message: "What is the manager's email?"
+    message: "What is the employee's email?"
   },
+  // Manager question
   {
     type: "input",
     name: "office",
-    message: "What is the manager's office number?"
-  }
-]
-
-const engineerQuestions = [
-  {
-    type: "input",
-    name: "name",
-    message: "What is the engineer's name?"
+    message: "What is the manager's office number?",
+    when: (questions) => questions.empType === "Manager"
   },
-  {
-    type: "input",
-    name: "email",
-    message: "What is the engineer's email?"
-  },
+  // Engineer question
   {
     type: "input",
     name: "github",
-    message: "What is the engineer's GitHub username?"
-  }
-]
-
-const internQuestions = [
-  {
-    type: "input",
-    name: "name",
-    message: "What is the intern's name?"
+    message: "What is the engineer's GitHub username?",
+    when: (questions) => questions.empType === "Engineer"
   },
-  {
-    type: "input",
-    name: "email",
-    message: "What is the intern's email?"
-  },
+  // Intern question
   {
     type: "input",
     name: "school",
-    message: "What school does the intern's attend?"
-  }
-]
-
-const addEmp = [
+    message: "What school does the intern's attend?",
+    when: (questions) => questions.empType === "Intern"
+  },
+  // Add employee
   {
     type: "list",
     name: "add",
-    message: "Would you like to add an employee?",
+    message: "Would you like to add another employee?",
     choices: [
       "Yes",
       "No"
     ]
   }
-]
+];
 
-const employeeType = [
-  {
-    type: "list",
-    name: "empType",
-    message: "What type of employee would you like to add?",
-    choices: [
-      "Engineer",
-      "Intern"
-    ]
-  }
-]
+let employees = []
 
 function init() {
-  const employees = []
+  askQuestions();
+}
 
-  async function getManager() {
-    try {
-      inquirer.prompt(managerQuestions).then(data => {
-        employees.push(data)
-      })
-    } catch (err) {
-      console.log(err);
+function askQuestions() {
+  inquirer.prompt(questions).then(data => {
+    employees.push(data);
+    if (data.add === "Yes") {
+      askQuestions();
+    } else {
+      console.log(employees);
     }
-  }
-  
-  getManager();
-  inquirer.prompt(addEmp)
-  console.log(employees)
+});
 }
 
 init();
