@@ -2,7 +2,9 @@
 
 ## Project Preview
 
-![](./Assets/Example.mov)
+<video width="320" height="240" controls>
+  <source src="./Assets/Example.mov" type="video/mp4">
+</video>
 
 ## Project Goals
 
@@ -19,7 +21,9 @@ so that I have quick access to emails and GitHub profiles
 
 This application has no known bugs
 
-![](./Assets/Test.mov)
+<video width="320" height="240" controls>
+  <source src="./Assets/Test.mov" type="video/mp4">
+</video>
 
 ## Future Development
 
