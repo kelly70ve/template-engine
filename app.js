@@ -18,7 +18,7 @@ const questions = [
   {
     type: "list",
     message: "What type of Employee would you like to add?",
-    name: "empType",
+    name: "role",
     choices: [
         "Manager",
         "Engineer",
@@ -73,22 +73,44 @@ const questions = [
   }
 ];
 
-let employees = []
+let answers = []
 
-function init() {
-  askQuestions();
+async function init() {
+  try {
+    await inquirer.prompt(questions).then(data => {
+      answers.push(data);
+      if (data.add === "Yes") {
+        init();
+      } else {
+        const employees = []
+
+        const engineers = answers.filter(employee => employee.role === 'Engineer');
+        const interns = answers.filter(employee => employee.role === 'Intern');
+        const managers = answers.filter(employee => employee.role === 'Manager');
+
+        engineers.forEach(engineer => {
+          employees.push(new Engineer(engineer.name, engineer.id, engineer.email, engineer.ghUn));
+        });
+  
+        interns.forEach(intern => {
+          employees.push(new Intern(intern.name, intern.id, intern.email, intern.school));
+        });
+  
+        managers.forEach(manager => {
+          employees.push(new Manager(manager.name, manager.id, manager.email, manager.officeNumber));
+        });
+  
+        const employeeHTML = render(employees);
+
+        console.log(employeeHTML);
+      }
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-function askQuestions() {
-  inquirer.prompt(questions).then(data => {
-    employees.push(data);
-    if (data.add === "Yes") {
-      askQuestions();
-    } else {
-      console.log(employees);
-    }
-});
-}
 
 init();
 
