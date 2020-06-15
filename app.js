@@ -45,21 +45,21 @@ const questions = [
     type: "input",
     name: "office",
     message: "What is the manager's office number?",
-    when: (questions) => questions.empType === "Manager"
+    when: (questions) => questions.role === "Manager"
   },
   // Engineer question
   {
     type: "input",
     name: "github",
     message: "What is the engineer's GitHub username?",
-    when: (questions) => questions.empType === "Engineer"
+    when: (questions) => questions.role === "Engineer"
   },
   // Intern question
   {
     type: "input",
     name: "school",
     message: "What school does the intern's attend?",
-    when: (questions) => questions.empType === "Intern"
+    when: (questions) => questions.role === "Intern"
   },
   // Add employee
   {
@@ -75,61 +75,38 @@ const questions = [
 
 let answers = []
 
-async function init() {
-  try {
-    await inquirer.prompt(questions).then(data => {
-      answers.push(data);
-      if (data.add === "Yes") {
-        init();
-      } else {
-        const employees = []
+function init() {
+  inquirer.prompt(questions).then(data => {
+    answers.push(data);
+    if (data.add === "Yes") {
+      init();
+    } else {
+      const employees = []
 
-        const engineers = answers.filter(employee => employee.role === 'Engineer');
-        const interns = answers.filter(employee => employee.role === 'Intern');
-        const managers = answers.filter(employee => employee.role === 'Manager');
+      const engineers = answers.filter(employee => employee.role === 'Engineer');
+      const interns = answers.filter(employee => employee.role === 'Intern');
+      const managers = answers.filter(employee => employee.role === 'Manager');
 
-        engineers.forEach(engineer => {
-          employees.push(new Engineer(engineer.name, engineer.id, engineer.email, engineer.ghUn));
-        });
-  
-        interns.forEach(intern => {
-          employees.push(new Intern(intern.name, intern.id, intern.email, intern.school));
-        });
-  
-        managers.forEach(manager => {
-          employees.push(new Manager(manager.name, manager.id, manager.email, manager.officeNumber));
-        });
-  
-        const employeeHTML = render(employees);
+      engineers.forEach(engineer => {
+        employees.push(new Engineer(engineer.name, engineer.id, engineer.email, engineer.github));
+      });
 
-        console.log(employeeHTML);
-      }
-    });
+      interns.forEach(intern => {
+        employees.push(new Intern(intern.name, intern.id, intern.email, intern.school));
+      });
 
-  } catch (err) {
-    console.log(err);
-  }
+      managers.forEach(manager => {
+        employees.push(new Manager(manager.name, manager.id, manager.email, manager.office));
+      });
+
+      const employeeHTML = render(employees);
+
+      fs.writeFile(outputPath, employeeHTML, (err) => {
+        if (err) throw err;
+        console.log("Your team site has been made!")
+      });
+    }
+  });
 }
 
-
 init();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
